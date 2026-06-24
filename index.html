@@ -21,6 +21,17 @@
     --gray:#8B92A0;
     --rule:#272E38;
     --radius:2px;
+
+    /* ── gradient tokens ── */
+    --grad-primary: linear-gradient(135deg, #3FB67F 0%, #54D89A 50%, #A8EDCB 100%);
+    --grad-gold:    linear-gradient(135deg, #C9922A 0%, #E0B23D 55%, #F5D87A 100%);
+    --grad-blue:    linear-gradient(135deg, #1565C0 0%, #1976D2 50%, #42A5F5 100%);
+    --grad-purple:  linear-gradient(135deg, #5E35B1 0%, #7E57C2 55%, #B39DDB 100%);
+    --grad-teal:    linear-gradient(135deg, #00695C 0%, #00897B 55%, #4DB6AC 100%);
+    --grad-hero:    linear-gradient(135deg, #54D89A 0%, #A8EDCB 40%, #E0B23D 100%);
+    --grad-surface: linear-gradient(145deg, #161B22 0%, #1C222B 100%);
+    --grad-bar:     linear-gradient(90deg, #1F4D38 0%, #3FB67F 50%, #54D89A 100%);
+    --grad-rule:    linear-gradient(90deg, transparent, #3FB67F 30%, #54D89A 70%, transparent);
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -40,17 +51,17 @@
     background:var(--surface);
   }
   ::-webkit-scrollbar-thumb{
-    background:var(--green-deep);
+    background:linear-gradient(180deg, #3FB67F, #1F4D38);
     border:2px solid var(--surface);
     border-radius:20px;
     background-clip:padding-box;
   }
   ::-webkit-scrollbar-thumb:hover{
-    background:var(--green);
+    background:linear-gradient(180deg, #54D89A, #3FB67F);
     background-clip:padding-box;
   }
   ::-webkit-scrollbar-thumb:active{
-    background:var(--green-bright);
+    background:linear-gradient(180deg, #A8EDCB, #54D89A);
     background-clip:padding-box;
   }
   ::-webkit-scrollbar-corner{
@@ -94,7 +105,16 @@
     padding:0 28px;
   }
 
-  /* ---------- Background grid texture ---------- */
+  /* ---------- Background ---------- */
+  #bgCanvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+    pointer-events:none;
+    opacity:0.85;
+  }
   .bg-grid{
     position:fixed;
     inset:0;
@@ -102,8 +122,8 @@
       linear-gradient(var(--rule) 1px, transparent 1px),
       linear-gradient(90deg, var(--rule) 1px, transparent 1px);
     background-size:48px 48px;
-    opacity:0.45;
-    z-index:-1;
+    opacity:0.18;
+    z-index:-2;
     pointer-events:none;
   }
 
@@ -124,7 +144,7 @@
   .progress-fill{
     height:100%;
     width:0%;
-    background:linear-gradient(90deg, var(--green), var(--gold));
+    background:linear-gradient(90deg, #1F4D38 0%, #3FB67F 40%, #54D89A 70%, #E0B23D 100%);
     transition:width 0.1s linear;
   }
   .topbar-inner{
@@ -160,13 +180,13 @@
     position:absolute;
     left:0; bottom:-2px;
     width:0; height:1px;
-    background:var(--green);
+    background:var(--grad-primary);
     transition:width 0.25s ease;
   }
   .nav-links a:hover{color:var(--paper);}
   .nav-links a:hover::after{width:100%;}
   .nav-links a.active{color:var(--green-bright);}
-  .nav-links a.active::after{width:100%; background:var(--green-bright);}
+  .nav-links a.active::after{width:100%; background:var(--grad-hero);}
   .nav-links a:focus-visible, a:focus-visible{
     outline:2px solid var(--green-bright);
     outline-offset:3px;
@@ -275,7 +295,10 @@
   .hero h1 em{
     font-style:italic;
     font-weight:500;
-    color:var(--green);
+    background:var(--grad-hero);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
   }
   .hero .role{
     font-family:'JetBrains Mono',monospace;
@@ -311,15 +334,36 @@
     transition:transform 0.15s ease, box-shadow 0.15s ease;
   }
   .btn-primary{
-    background:var(--paper);
+    background:var(--grad-primary);
     color:var(--ink);
+    border:none;
   }
-  .btn-primary:hover{transform:translateY(-2px); box-shadow:3px 4px 0 var(--green-bright);}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 24px -6px rgba(84,216,154,0.45);}
   .btn-ghost{
     border:1px solid var(--rule);
     color:var(--paper);
+    background:transparent;
+    position:relative;
+    overflow:hidden;
+    z-index:0;
   }
-  .btn-ghost:hover{transform:translateY(-2px); box-shadow:3px 4px 0 var(--gold); border-color:var(--gold);}
+  .btn-ghost::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, rgba(31,77,56,0.0) 0%, rgba(201,146,42,0.0) 100%);
+    transition:background 0.3s ease, opacity 0.3s ease;
+    z-index:-1;
+  }
+  .btn-ghost:hover{
+    transform:translateY(-2px);
+    border-color:rgba(224,178,61,0.7);
+    color:var(--paper);
+    box-shadow:0 8px 24px -6px rgba(224,178,61,0.3), inset 0 0 0 1px rgba(224,178,61,0.2);
+  }
+  .btn-ghost:hover::before{
+    background:linear-gradient(135deg, rgba(31,77,56,0.35) 0%, rgba(201,146,42,0.28) 60%, rgba(224,178,61,0.18) 100%);
+  }
   .btn:focus-visible{outline:2px solid var(--green-bright); outline-offset:2px;}
 
   /* ---------- Terminal signature element ---------- */
@@ -383,18 +427,27 @@
     align-items:baseline;
     gap:14px;
     margin-bottom:34px;
-    border-bottom:1px solid var(--rule);
+    border-bottom:none;
     padding-bottom:16px;
     flex-wrap:wrap;
+    position:relative;
+  }
+  .section-head::after{
+    content:'';
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:1px;
+    background:var(--grad-rule);
   }
   .section-tag{
     font-family:'JetBrains Mono',monospace;
     font-size:12px;
-    color:var(--green-bright);
-    background:rgba(63,182,127,0.12);
+    color:#0D1117;
+    background:var(--grad-primary);
     padding:3px 8px;
     border-radius:3px;
     white-space:nowrap;
+    font-weight:700;
   }
   .section-head h2{
     font-family:'Fraunces',serif;
@@ -415,9 +468,18 @@
 
   .stat-card{
     border:1px solid var(--rule);
-    background:var(--surface-2);
+    background:var(--grad-surface);
     padding:16px 18px;
     border-radius:4px;
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::before{
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height:2px;
+    background:var(--grad-primary);
   }
   .stat-row{display:flex; justify-content:space-between; gap:12px; margin-bottom:12px;}
   .stat-row:last-child{margin-bottom:0;}
@@ -450,7 +512,7 @@
   }
   .skill-fill{
     height:100%;
-    background:linear-gradient(90deg, var(--green), var(--green-bright));
+    background:var(--grad-bar);
     border-radius:3px 0 0 3px;
     width:0;
     transition:width 1.1s cubic-bezier(0.16,1,0.3,1);
@@ -471,10 +533,11 @@
   .pill{
     font-family:'JetBrains Mono',monospace;
     font-size:12.5px;
-    border:1px solid var(--rule);
     padding:7px 13px;
     border-radius:20px;
-    background:var(--surface-2);
+    background:linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
+               var(--grad-primary) border-box;
+    border:1px solid transparent;
     color:var(--paper);
   }
 
@@ -539,9 +602,9 @@
   .tag{
     font-family:'JetBrains Mono',monospace;
     font-size:11px;
-    background:var(--surface-2);
+    background:linear-gradient(135deg, rgba(31,77,56,0.7) 0%, rgba(63,182,127,0.2) 100%);
     color:var(--green-bright);
-    border:1px solid var(--rule);
+    border:1px solid rgba(63,182,127,0.3);
     padding:4px 9px;
     border-radius:3px;
   }
@@ -590,7 +653,7 @@
     position:absolute;
     left:5px; top:6px; bottom:6px;
     width:1px;
-    background:var(--rule);
+    background:linear-gradient(180deg, var(--green-bright), var(--green-deep), transparent);
   }
   .tl-item{position:relative; padding-bottom:30px;}
   .tl-item:last-child{padding-bottom:0;}
@@ -615,54 +678,119 @@
 
   /* ---------- Contact / footer ---------- */
   .contact-section{
-    background:var(--surface-2);
+    background:var(--grad-surface);
     color:var(--paper);
     border-radius:6px;
     border:1px solid var(--rule);
+    border-top:none;
     padding:48px 36px;
     margin:0;
     text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .contact-section::before{
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height:2px;
+    background:var(--grad-hero);
   }
   .contact-section .section-head{border-bottom:none; justify-content:center; padding-bottom:8px;}
+  .contact-section .section-head::after{background:var(--grad-rule);}
   .contact-section h2{color:var(--paper);}
-  .contact-section .section-tag{background:rgba(63,182,127,0.16); color:var(--green-bright);}
+  .contact-section .section-tag{background:var(--grad-primary); color:#0D1117;}
   .contact-section p{color:#9aa4af; max-width:440px; margin:0 auto 26px; font-size:15px;}
   .contact-links{
     display:flex;
     justify-content:center;
-    gap:16px;
+    gap:14px;
     flex-wrap:wrap;
   }
-  .contact-links a{
+  .contact-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
     font-family:'JetBrains Mono',monospace;
     font-size:13px;
-    border:1px solid var(--rule);
-    padding:11px 18px;
-    border-radius:4px;
+    font-weight:600;
+    padding:13px 22px;
+    border-radius:6px;
     text-decoration:none;
     color:var(--paper);
-    transition:border-color 0.2s ease, background 0.2s ease;
-    white-space:nowrap;
+    border:1px solid transparent;
+    transition:transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    position:relative;
+    overflow:hidden;
   }
-  .contact-links a:hover{border-color:var(--green-bright); background:rgba(63,182,127,0.12);}
-  .contact-links .short-text{display:none;}
+  .contact-btn::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    opacity:0;
+    transition:opacity 0.2s ease;
+    background:rgba(255,255,255,0.06);
+  }
+  .contact-btn:hover::before{opacity:1;}
+  .contact-btn:hover{transform:translateY(-3px);}
+  .contact-btn:focus-visible{outline:2px solid var(--green-bright); outline-offset:3px;}
 
-  @media (max-width:420px){
-    .contact-links .full-text{display:none;}
-    .contact-links .short-text{display:inline;}
+  .contact-btn svg{
+    flex-shrink:0;
+    width:17px; height:17px;
+  }
+
+  /* Email — green gradient */
+  .contact-btn.btn-email{
+    background:linear-gradient(135deg, rgba(31,77,56,0.6) 0%, rgba(63,182,127,0.25) 100%);
+    border-color:rgba(84,216,154,0.45);
+    color:var(--green-bright);
+  }
+  .contact-btn.btn-email:hover{
+    background:linear-gradient(135deg, rgba(31,77,56,0.85) 0%, rgba(84,216,154,0.4) 100%);
+    border-color:var(--green-bright);
+    box-shadow:0 8px 24px -6px rgba(84,216,154,0.4);
+  }
+
+  /* Phone — teal gradient */
+  .contact-btn.btn-phone{
+    background:linear-gradient(135deg, rgba(0,77,64,0.6) 0%, rgba(0,137,123,0.25) 100%);
+    border-color:rgba(77,182,172,0.45);
+    color:#4DB6AC;
+  }
+  .contact-btn.btn-phone:hover{
+    background:linear-gradient(135deg, rgba(0,77,64,0.85) 0%, rgba(77,182,172,0.4) 100%);
+    border-color:#4DB6AC;
+    box-shadow:0 8px 24px -6px rgba(77,182,172,0.4);
+  }
+
+  /* LinkedIn — blue gradient */
+  .contact-btn.btn-linkedin{
+    background:linear-gradient(135deg, rgba(13,71,161,0.6) 0%, rgba(25,118,210,0.25) 100%);
+    border-color:rgba(66,165,245,0.45);
+    color:#42A5F5;
+  }
+  .contact-btn.btn-linkedin:hover{
+    background:linear-gradient(135deg, rgba(13,71,161,0.85) 0%, rgba(66,165,245,0.4) 100%);
+    border-color:#42A5F5;
+    box-shadow:0 8px 24px -6px rgba(66,165,245,0.45);
+  }
+
+  /* GitHub — purple gradient */
+  .contact-btn.btn-github{
+    background:linear-gradient(135deg, rgba(49,27,146,0.6) 0%, rgba(94,53,177,0.25) 100%);
+    border-color:rgba(179,157,219,0.45);
+    color:#B39DDB;
+  }
+  .contact-btn.btn-github:hover{
+    background:linear-gradient(135deg, rgba(49,27,146,0.85) 0%, rgba(179,157,219,0.4) 100%);
+    border-color:#B39DDB;
+    box-shadow:0 8px 24px -6px rgba(149,117,205,0.45);
   }
 
   @media (max-width:560px){
-    .contact-links{
-      flex-direction:column;
-      align-items:stretch;
-      gap:10px;
-    }
-    .contact-links a{
-      text-align:center;
-      white-space:normal;
-      word-break:break-word;
-    }
+    .contact-links{flex-direction:column; align-items:stretch; gap:10px;}
+    .contact-btn{justify-content:center;}
   }
 
   footer{
@@ -670,7 +798,10 @@
     padding:32px 0;
     font-family:'JetBrains Mono',monospace;
     font-size:11.5px;
-    color:var(--gray);
+    background:var(--grad-primary);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
   }
 
   .fade-in{
@@ -704,7 +835,7 @@
     box-shadow:0 8px 18px -6px rgba(0,0,0,0.5);
   }
   .top-btn.show{opacity:1; visibility:visible; transform:translateY(0);}
-  .top-btn:hover{background:var(--green-deep); border-color:var(--green-bright);}
+  .top-btn:hover{background:var(--grad-primary); color:var(--ink); border-color:transparent;}
   .top-btn:focus-visible{outline:2px solid var(--green-bright); outline-offset:3px;}
 
   @media (max-width:480px){
@@ -716,6 +847,7 @@
 </head>
 <body>
 
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
 <div class="bg-grid"></div>
 
 <div class="topbar">
@@ -929,10 +1061,42 @@
       </div>
       <p>Open to internships, freelance data projects, and anything that involves a messy spreadsheet and a deadline. References available on request.</p>
       <div class="contact-links">
-        <a href="mailto:shaheershaikh943@gmail.com">shaheershaikh943@gmail.com</a>
-        <a href="tel:+923190242127">+92 319 0242127</a>
-        <a href="https://www.linkedin.com/in/shaheershaikh1" target="_blank" rel="noopener noreferrer"><span class="full-text">linkedin.com/in/shaheershaikh1</span><span class="short-text">LinkedIn</span></a>
-        <a href="#top">Hyderabad, Sindh, PK</a>
+
+        <!-- Email -->
+        <a href="mailto:shaheershaikh943@gmail.com" class="contact-btn btn-email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <polyline points="2,4 12,13 22,4"/>
+          </svg>
+          Email
+        </a>
+
+        <!-- Phone -->
+        <a href="tel:+923190242127" class="contact-btn btn-phone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          Phone
+        </a>
+
+        <!-- LinkedIn -->
+        <a href="https://www.linkedin.com/in/shaheershaikh1" target="_blank" rel="noopener noreferrer" class="contact-btn btn-linkedin">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+            <rect x="2" y="9" width="4" height="12"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+          LinkedIn
+        </a>
+
+        <!-- GitHub -->
+        <a href="https://github.com/shaheershaikh943" target="_blank" rel="noopener noreferrer" class="contact-btn btn-github">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          GitHub
+        </a>
+
       </div>
     </div>
   </section>
@@ -1102,6 +1266,431 @@
       project.querySelector('.project-toggle').textContent = isOpen ? '+' : '×';
     });
   });
+
+  // ══════════════════════════════════════════════════════════════════
+  // CS BACKGROUND  —  5 layered animations
+  // 1. Topographic / flowing data waves
+  // 2. Python matrix rain
+  // 3. Floating Python operators
+  // 4. Interactive particle network (mouse-reactive)
+  // 5. Simulated git commit tree (scroll-reactive)
+  // ══════════════════════════════════════════════════════════════════
+  (function(){
+    const canvas = document.getElementById('bgCanvas');
+    const ctx    = canvas.getContext('2d');
+    const PRM    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(PRM){ canvas.style.display='none'; return; }
+
+    // ── palette (matches CSS vars) ────────────────────────────────
+    const G   = [63,182,127];   // --green
+    const GB  = [84,216,154];   // --green-bright
+    const GD  = [31,77,56];     // --green-deep
+    const AU  = [224,178,61];   // --gold
+    const BG  = [17,21,28];     // --surface
+
+    const rga = (c,a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+    const rnd = (a,b) => a + Math.random()*(b-a);
+    let W, H, raf, t=0, scrollY=0;
+    let mx=-9999, my=-9999;
+
+    window.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
+    window.addEventListener('mouseleave', ()=>{ mx=-9999; my=-9999; });
+    window.addEventListener('scroll', ()=>{ scrollY=window.scrollY; }, {passive:true});
+
+    // ════════════════════════════════════════════════════════════════
+    // LAYER 1 — TOPOGRAPHIC / FLOWING DATA WAVES
+    // ════════════════════════════════════════════════════════════════
+    function drawWaves(){
+      const lines = 9;
+      const amp   = H * 0.055;
+      const speed = t * 0.0007;
+
+      for(let l=0; l<lines; l++){
+        const yBase   = H * (l+1) / (lines+1);
+        const freq1   = 0.0018 + l*0.0003;
+        const freq2   = 0.0031 + l*0.0002;
+        const phase1  = speed + l*0.7;
+        const phase2  = speed*1.3 + l*1.1;
+        const alpha   = 0.025 + (l % 3 === 0 ? 0.02 : 0);
+        const isGold  = l === 3 || l === 7;
+        const col     = isGold ? AU : G;
+
+        ctx.beginPath();
+        ctx.moveTo(0, yBase);
+        for(let x=0; x<=W; x+=4){
+          const y = yBase
+            + Math.sin(x*freq1 + phase1)*amp
+            + Math.sin(x*freq2 + phase2)*(amp*0.4)
+            + Math.sin(x*0.0008 + speed*0.5)*(amp*0.2);
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = rga(col, alpha);
+        ctx.lineWidth   = l%4===0 ? 1.2 : 0.7;
+        ctx.stroke();
+
+        // dot on each wave crest (like a data point marker)
+        for(let x=0; x<=W; x+=120){
+          const y = yBase
+            + Math.sin(x*freq1+phase1)*amp
+            + Math.sin(x*freq2+phase2)*(amp*0.4);
+          const dot = 1.5 + 0.8*Math.sin(t*0.03+x*0.01+l);
+          ctx.beginPath();
+          ctx.arc(x, y, dot, 0, Math.PI*2);
+          ctx.fillStyle = rga(col, alpha*3);
+          ctx.fill();
+        }
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // LAYER 2 — PYTHON MATRIX RAIN
+    // ════════════════════════════════════════════════════════════════
+    const RAIN_TOKENS = [
+      'def','class','import','return','lambda','yield','async','await',
+      'pd.read','np.array','plt.show','df.head','for i in','if __name__',
+      '==','!=','<=','>=','**','//','+=','-=','->',':=','>>>','...',
+      'True','False','None','0xFF','0b101','NaN','[i]','{}','()',
+      'pandas','numpy','sklearn','matplotlib','seaborn','scipy',
+      '0','1','∑','π','λ','∞','Δ','σ','μ',
+    ];
+    const COL_W = 16;
+    let rainCols = [];
+
+    function initRain(){
+      const count = Math.floor(W / COL_W);
+      rainCols = Array.from({length:count}, ()=>({
+        y:      rnd(-H, 0),
+        speed:  rnd(0.5, 1.6),
+        len:    Math.floor(rnd(6, 22)),
+        alpha:  rnd(0.06, 0.2),
+        bright: Math.random()<0.1,
+        chars:  Array.from({length:22}, ()=>
+          RAIN_TOKENS[Math.floor(Math.random()*RAIN_TOKENS.length)]),
+        tick:   0,
+      }));
+    }
+
+    function drawRain(){
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'top';
+      rainCols.forEach((col, ci)=>{
+        col.tick++;
+        // shuffle one char per 6 frames for shimmer
+        if(col.tick % 6 === 0){
+          const ri = Math.floor(Math.random()*col.chars.length);
+          col.chars[ri] = RAIN_TOKENS[Math.floor(Math.random()*RAIN_TOKENS.length)];
+        }
+        const x = ci * COL_W + COL_W/2;
+        for(let j=0; j<col.len; j++){
+          const cy = col.y - j*14;
+          if(cy<-20 || cy>H+20) continue;
+          const ratio = 1 - j/col.len;
+          let a, fs, fc;
+          if(j===0 && col.bright){
+            a=col.alpha*4; fs=11; fc=rga(GB,a);
+          } else {
+            const g = Math.floor(60+110*ratio);
+            a = col.alpha * ratio * 1.2;
+            fs = 10;
+            fc = `rgba(30,${g},${50+g*0.3},${a})`;
+          }
+          ctx.font = `${fs}px 'JetBrains Mono',monospace`;
+          ctx.fillStyle = fc;
+          ctx.fillText(col.chars[j % col.chars.length], x, cy);
+        }
+        col.y += col.speed;
+        if(col.y - col.len*14 > H){
+          col.y = rnd(-120, -20);
+          col.speed = rnd(0.5,1.6);
+          col.len   = Math.floor(rnd(6,22));
+          col.alpha = rnd(0.06,0.2);
+          col.bright= Math.random()<0.1;
+        }
+      });
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // LAYER 3 — FLOATING PYTHON OPERATORS & LIBRARY SYMBOLS
+    // ════════════════════════════════════════════════════════════════
+    const OPS = [
+      '+','-','*','/','//','%','**',
+      '==','!=','<','>','<=','>=',
+      'and','or','not','in','is',
+      '&','|','^','~','<<','>>',
+      '=','+=','-=','*=','/=',':=','->',
+      'pd','np','plt','df','sns','skl',
+      'def','λ','∑','π','Δ','σ','μ','∞',
+      '{}','[]','()','"""','# ',
+    ];
+    let floatOps = [];
+
+    function initOps(){
+      const count = Math.min(Math.floor((W*H)/11000), 70);
+      floatOps = Array.from({length:count}, ()=>makeOp(true));
+    }
+
+    function makeOp(randY=false){
+      const isGold = Math.random()<0.18;
+      const isLib  = Math.random()<0.12;
+      const col    = isLib ? GB : (isGold ? AU : G);
+      return {
+        text:   OPS[Math.floor(Math.random()*OPS.length)],
+        x:      rnd(0,W),
+        y:      randY ? rnd(-60,H+60) : H+rnd(20,80),
+        vx:     rnd(-0.25,0.25),
+        vy:     rnd(-0.5,-0.08),
+        rot:    rnd(-0.012,0.012),
+        angle:  rnd(0,Math.PI*2),
+        size:   rnd(11,24),
+        col,
+        alpha:  rnd(0.07,0.24),
+        phase:  rnd(0,Math.PI*2),
+        phaseS: rnd(0.004,0.016),
+      };
+    }
+
+    function drawOps(){
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      floatOps.forEach((op,i)=>{
+        op.x+=op.vx; op.y+=op.vy;
+        op.angle+=op.rot; op.phase+=op.phaseS;
+        const pad=80;
+        if(op.y<-pad||op.y>H+pad||op.x<-pad||op.x>W+pad){
+          floatOps[i]=makeOp(false); return;
+        }
+        const breathe=0.65+0.35*Math.sin(op.phase);
+        const a=op.alpha*breathe;
+        ctx.save();
+        ctx.translate(op.x,op.y);
+        ctx.rotate(op.angle);
+        ctx.font=`600 ${op.size}px 'JetBrains Mono',monospace`;
+        ctx.fillStyle=rga(op.col,a);
+        ctx.fillText(op.text,0,0);
+        ctx.restore();
+      });
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // LAYER 4 — INTERACTIVE PARTICLE NETWORK (mouse-reactive)
+    // ════════════════════════════════════════════════════════════════
+    let nodes = [];
+    const MAX_LINK = 160;
+    const MOUSE_R  = 200;
+
+    function initNodes(){
+      const count = Math.min(Math.floor((W*H)/14000), 55);
+      nodes = Array.from({length:count}, ()=>({
+        x:  rnd(0,W), y:rnd(0,H),
+        vx: rnd(-0.18,0.18), vy:rnd(-0.18,0.18),
+        r:  rnd(1.5,3.2),
+        phase: rnd(0,Math.PI*2), phaseS:rnd(0.006,0.015),
+        gold: Math.random()<0.15,
+        alpha: rnd(0.2,0.55),
+      }));
+    }
+
+    function drawNetwork(){
+      // edges first
+      for(let i=0;i<nodes.length;i++){
+        const a=nodes[i];
+        // mouse lines
+        const mdx=a.x-mx, mdy=a.y-my;
+        const md=Math.sqrt(mdx*mdx+mdy*mdy);
+        if(md<MOUSE_R){
+          const mo=(1-md/MOUSE_R)*0.5;
+          ctx.strokeStyle=rga(GB,mo);
+          ctx.lineWidth=0.9;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(mx,my); ctx.stroke();
+        }
+        for(let j=i+1;j<nodes.length;j++){
+          const b=nodes[j];
+          const dx=a.x-b.x, dy=a.y-b.y;
+          const d=Math.sqrt(dx*dx+dy*dy);
+          if(d<MAX_LINK){
+            const la=(1-d/MAX_LINK)*0.22;
+            // data packet travelling along edge
+            ctx.strokeStyle=rga(G,la);
+            ctx.lineWidth=0.7;
+            ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          }
+        }
+      }
+      // nodes
+      nodes.forEach(n=>{
+        n.x+=n.vx; n.y+=n.vy;
+        n.phase+=n.phaseS;
+        // mouse repulsion
+        const dx=n.x-mx, dy=n.y-my;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<100&&d>0){ n.vx+=(dx/d)*0.02; n.vy+=(dy/d)*0.02; }
+        n.vx*=0.993; n.vy*=0.993;
+        // wrap
+        if(n.x<0)n.x=W; if(n.x>W)n.x=0;
+        if(n.y<0)n.y=H; if(n.y>H)n.y=0;
+
+        const pulse=0.6+0.4*Math.sin(n.phase);
+        const a=n.alpha*pulse;
+        const col=n.gold?AU:G;
+        // halo
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r*3,0,Math.PI*2);
+        ctx.fillStyle=rga(col,a*0.12); ctx.fill();
+        // core
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+        ctx.fillStyle=rga(col,a); ctx.fill();
+      });
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // LAYER 5 — GIT COMMIT TREE (bottom-right, scroll-reactive)
+    // ════════════════════════════════════════════════════════════════
+    const GIT_MSG = [
+      'init repo','add model','fix bug','refactor',
+      'add tests','merge dev','push data','clean df',
+      'add vis','update README','hot fix','v1.0.0',
+    ];
+    let gitNodes=[], gitEdges=[], gitGrown=0;
+
+    function buildGitTree(){
+      // build a static DAG structure: main branch + 2 feature branches
+      gitNodes=[];gitEdges=[];
+      const ox = W-20, oy = H*0.98;
+      const spacing=38, branchX=55;
+      const mainCount=7;
+      // main branch (vertical)
+      for(let i=0;i<mainCount;i++){
+        gitNodes.push({
+          x:ox, y:oy-i*spacing,
+          label:GIT_MSG[i%GIT_MSG.length],
+          branch:0, alpha:0, targetAlpha:0.85,
+          phase:rnd(0,Math.PI*2), phaseS:rnd(0.006,0.012),
+        });
+        if(i>0) gitEdges.push({a:i-1,b:i,branch:0});
+      }
+      // feature branch 1 (left)
+      const fb1Start=2;
+      for(let i=0;i<4;i++){
+        const ni=gitNodes.length;
+        gitNodes.push({
+          x:ox-branchX,
+          y:oy-(fb1Start+i+1)*spacing,
+          label:GIT_MSG[(7+i)%GIT_MSG.length],
+          branch:1, alpha:0, targetAlpha:0.7,
+          phase:rnd(0,Math.PI*2), phaseS:rnd(0.006,0.012),
+        });
+        if(i===0) gitEdges.push({a:fb1Start,b:ni,branch:1});
+        else      gitEdges.push({a:ni-1,b:ni,branch:1});
+      }
+      // feature branch 2 (further left)
+      const fb2Start=4;
+      for(let i=0;i<3;i++){
+        const ni=gitNodes.length;
+        gitNodes.push({
+          x:ox-branchX*2,
+          y:oy-(fb2Start+i+1)*spacing,
+          label:GIT_MSG[(10+i)%GIT_MSG.length],
+          branch:2, alpha:0, targetAlpha:0.55,
+          phase:rnd(0,Math.PI*2), phaseS:rnd(0.006,0.012),
+        });
+        if(i===0) gitEdges.push({a:fb2Start,b:ni,branch:2});
+        else      gitEdges.push({a:ni-1,b:ni,branch:2});
+      }
+      gitGrown=0;
+    }
+
+    function drawGitTree(){
+      if(!gitNodes.length) return;
+      // reveal nodes based on scroll — more scroll = more commits visible
+      const maxDoc = Math.max(1, document.documentElement.scrollHeight-window.innerHeight);
+      const scrollRatio = Math.min(scrollY/maxDoc, 1);
+      const revealCount = Math.floor(1 + scrollRatio*(gitNodes.length-1));
+
+      const branchColors=[G, GB, AU];
+
+      // edges
+      gitEdges.forEach(e=>{
+        if(e.a>=revealCount||e.b>=revealCount) return;
+        const na=gitNodes[e.a], nb=gitNodes[e.b];
+        const col=branchColors[e.branch]||G;
+        ctx.strokeStyle=rga(col,0.3);
+        ctx.lineWidth=1.2;
+        ctx.setLineDash([4,4]);
+        ctx.beginPath();
+        ctx.moveTo(na.x,na.y);
+        // curved bezier for branches
+        if(e.branch>0){
+          const cpx=(na.x+nb.x)/2;
+          const cpy=na.y;
+          ctx.quadraticCurveTo(cpx,cpy,nb.x,nb.y);
+        } else {
+          ctx.lineTo(nb.x,nb.y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+
+      // nodes
+      gitNodes.slice(0,revealCount).forEach((n,i)=>{
+        n.phase+=n.phaseS;
+        const col=branchColors[n.branch]||G;
+        const pulse=0.7+0.3*Math.sin(n.phase);
+        const a=n.targetAlpha*pulse;
+
+        // commit dot
+        ctx.beginPath(); ctx.arc(n.x,n.y,4.5,0,Math.PI*2);
+        ctx.fillStyle=rga(col,a); ctx.fill();
+        ctx.beginPath(); ctx.arc(n.x,n.y,7,0,Math.PI*2);
+        ctx.strokeStyle=rga(col,a*0.35); ctx.lineWidth=1; ctx.stroke();
+
+        // label (only on main branch)
+        if(n.branch===0){
+          ctx.font=`9px 'JetBrains Mono',monospace`;
+          ctx.textAlign='right'; ctx.textBaseline='middle';
+          ctx.fillStyle=rga(col,a*0.6);
+          ctx.fillText(n.label, n.x-12, n.y);
+        }
+      });
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // INIT + RESIZE
+    // ════════════════════════════════════════════════════════════════
+    function init(){
+      W=canvas.width =window.innerWidth;
+      H=canvas.height=window.innerHeight;
+      initRain(); initOps(); initNodes(); buildGitTree();
+    }
+    let rsTimer;
+    window.addEventListener('resize',()=>{
+      clearTimeout(rsTimer); rsTimer=setTimeout(init,200);
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // MAIN LOOP
+    // ════════════════════════════════════════════════════════════════
+    function tick(){
+      raf=requestAnimationFrame(tick);
+      t++;
+
+      // soft dark wipe — preserves rain trails
+      ctx.fillStyle=`rgba(${BG[0]},${BG[1]},${BG[2]},0.2)`;
+      ctx.fillRect(0,0,W,H);
+
+      drawWaves();       // 1. topo lines
+      drawRain();        // 2. code rain
+      drawOps();         // 3. floating operators
+      drawNetwork();     // 4. particle net
+      drawGitTree();     // 5. git tree
+    }
+
+    init();
+    tick();
+
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden) cancelAnimationFrame(raf);
+      else tick();
+    });
+  })();
 </script>
 
 </body>
